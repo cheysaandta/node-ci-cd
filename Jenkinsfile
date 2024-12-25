@@ -16,6 +16,15 @@ pipeline {
             }
         }
 
+        stages {
+        stage('Verify Node and npm') {
+            steps {
+                sh 'echo $SHELL'
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
+            
         stage('Run Tests') {
             steps {
                 sh 'npm test'
