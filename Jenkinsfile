@@ -1,79 +1,52 @@
 pipeline {
     agent any
-    environment {
-        CI = 'true'
-    }
+
     stages {
-        stages {
-            stage('Checkout') {
-                steps {
-                    script {
-                        def branch = env.BRANCH_NAME
-                        if (branch == 'main') {
-                            git url: 'https://github.com/cheysaandta/node-ci-cd.git', branch: 'main'
-                        } else {
-                            git url: 'https://github.com/cheysaandta/node-ci-cd.git', branch: 'develop'
-                        }
-                    }
-                }
+        stage('Checkout') {
+            steps {
+                // Checkout code from GitHub
+                git 'https://github.com/cheysaandta/node-ci-cd.git'
             }
+        }
 
         stage('Install Dependencies') {
             steps {
+                // Install dependencies
                 sh 'npm install'
             }
         }
-        stage('Run Unit Tests') {
-            steps {
-                sh 'npm test'
-            }
-        }
 
-        stage('Run Integration Tests') {
+        stage('Run Tests') {
             steps {
-                sh 'npm run integration-test'
+                // Run tests
+                sh 'npm test'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building the application...'
+                // Build your project (optional)
+                sh 'npm run build'
             }
         }
+
         stage('Deploy') {
             steps {
-                echo 'Deploying the application...'
+                // Deploy to staging or production
+                echo 'Deploying to server...'
             }
         }
-        stage('Run Integration Tests') {
-             steps {
-                 sh 'npm run integration-test'
-            }
-        }
-        stage('Deploy to Staging') {
-             steps {
-                 sh './deploy.sh'
-             }
-        }
-
-
     }
+
     post {
+        always {
+            echo 'This will always run after the pipeline finishes.'
+        }
         success {
-            echo 'Pipeline finished successfully!'
+            echo 'This will run only if the pipeline is successful.'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'This will run only if the pipeline fails.'
         }
     }
-
-    post {
-    success {
-        emailext subject: 'Build Succeeded', body: 'The build succeeded!',
-        recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-    }
-    failure {
-        emailext subject: 'Build Failed', body: 'The build failed.',
-        recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-    }}
-}}
+}
