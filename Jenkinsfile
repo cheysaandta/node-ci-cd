@@ -4,35 +4,30 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from GitHub
-                git 'https://github.com/cheysaandta/node-ci-cd.git'
+                git branch: 'main', url: 'https://github.com/cheysaandta/node-ci-cd.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                // Install dependencies
                 sh 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                // Run tests
                 sh 'npm test'
             }
         }
 
         stage('Build') {
             steps {
-                // Build your project (optional)
                 sh 'npm run build'
             }
         }
 
         stage('Deploy') {
             steps {
-                // Deploy to staging or production
                 echo 'Deploying to server...'
             }
         }
